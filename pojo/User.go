@@ -5,9 +5,9 @@ import (
 	"test/database"
 )
 
-type User struct {
-	Id       int    `json:"UserId"`
-	Name     string `json:"UserName"`
+type User struct { //DB : Users
+	Id       int    `json:"UserId"`   //Id DB : id, UserId DB: user_id
+	Name     string `json:"UserName"` // Name DB:name, UserName DB: user_name
 	Password string `json:"UserPassword"`
 	Email    string `json:"UserEmail"`
 }
