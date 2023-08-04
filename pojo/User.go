@@ -1,6 +1,7 @@
 package pojo
 
 import (
+	"log"
 	"test/database"
 )
 
@@ -20,5 +21,28 @@ func FindALLUsers() []User {
 func FindByUserId(userId string) User {
 	var user User
 	database.DBconnect.Where("id = ?", userId).First(&user) //id的值由userId注入，在使用First(找出第一個ID)去尋找指向user的table
+	return user
+}
+
+// Post
+func CreateUser(user User) User {
+	database.DBconnect.Create(&user)
+	return user
+}
+
+// DeleteUser
+func DeleteUser(userId string) bool {
+	user := User{}
+	result := database.DBconnect.Where("id = ?", userId).Delete(&user) //找到id進行Delete user並回傳
+	log.Println(result)
+	if result.RowsAffected == 0 {
+		return false
+	}
+	return true
+}
+
+// UpdateUser
+func UpdateUser(userId string, user User) User {
+	database.DBconnect.Model(&user).Where("id = ?", userId).Updates(user) //更改User結構
 	return user
 }
