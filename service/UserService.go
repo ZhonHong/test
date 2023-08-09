@@ -4,6 +4,10 @@ package service
 import (
 	"log"
 	"net/http"
+
+	//"os/user"
+
+	"test/middlewares"
 	"test/pojo"
 
 	"github.com/gin-gonic/gin"
@@ -99,4 +103,53 @@ func PutUser(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, user) //回傳user
+}
+
+// CreateUserList
+func CreateUserList(c *gin.Context) {
+	users := pojo.Users{}
+	err := c.BindJSON(&users)
+	if err != nil {
+		c.String(400, "Error:%s", err.Error())
+		return
+	}
+	c.JSON(http.StatusOK, users)
+}
+
+// Login User
+func LoginUser(c *gin.Context) {
+	name := c.PostForm("name")
+	password := c.PostForm("password")
+	user := pojo.CheckUserPassword(name, password)
+	if user.Id == 0 {
+		c.JSON(http.StatusNotFound, "Error")
+		return
+	}
+	middlewares.SaveSession(c, user.Id) //將user.Id傳入
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Login Successfully",
+		"User":    user,
+		"Session": middlewares.GetSession(c),
+	})
+}
+
+// Logout User
+func LogoutUser(c *gin.Context) {
+	middlewares.ClearSession(c)
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Logout Successfully",
+	})
+}
+
+// Check User Session
+func CheckUserSession(c *gin.Context) {
+	sessionId := middlewares.GetSession(c)
+	if sessionId == 0 {
+		c.JSON(http.StatusUnauthorized, "Error")
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Check Session Successfully",
+		"User":    middlewares.GetSession(c),
+	})
 }

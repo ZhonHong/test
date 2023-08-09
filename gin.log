@@ -4,16 +4,21 @@
  - using env:	export GIN_MODE=release
  - using code:	gin.SetMode(gin.ReleaseMode)
 
-[GIN-debug] GET    /v1/users/                --> test/service.FindALLUser (5 handlers)
-[GIN-debug] GET    /v1/users/:id             --> test/service.FindByUserId (5 handlers)
-[GIN-debug] POST   /v1/users/                --> test/service.PostUser (5 handlers)
-[GIN-debug] DELETE /v1/users/:id             --> test/service.DeleteUser (5 handlers)
-[GIN-debug] PUT    /v1/users/:id             --> test/service.PutUser (5 handlers)
+[GIN-debug] GET    /v1/users/                --> test/service.FindALLUser (6 handlers)
+[GIN-debug] GET    /v1/users/:id             --> test/service.FindByUserId (6 handlers)
+[GIN-debug] POST   /v1/users/                --> test/service.PostUser (6 handlers)
+[GIN-debug] POST   /v1/users/more            --> test/service.CreateUserList (6 handlers)
+[GIN-debug] PUT    /v1/users/:id             --> test/service.PutUser (6 handlers)
+[GIN-debug] POST   /v1/users/login           --> test/service.LoginUser (6 handlers)
+[GIN-debug] GET    /v1/users/check           --> test/service.CheckUserSession (6 handlers)
+[GIN-debug] DELETE /v1/users/:id             --> test/service.DeleteUser (7 handlers)
+[GIN-debug] GET    /v1/users/logout          --> test/service.LogoutUser (7 handlers)
 [GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
 Please check https://pkg.go.dev/github.com/gin-gonic/gin#readme-don-t-trust-all-proxies for details.
 [GIN-debug] Listening and serving HTTP on :8080
-[GIN] 2023/08/04 - 23:27:45 | 401 |            0s |             ::1 | GET      "/v1/users/"
-[GIN] 2023/08/04 - 23:28:04 | 401 |            0s |             ::1 | GET      "/v1/users/"
-::1 - [2023-08-04 23:28:14.1152671 +0800 CST m=+48.922626301] GET /v1/users/ 200 
-[GIN] 2023/08/04 - 23:28:14 | 200 |      2.5608ms |             ::1 | GET      "/v1/users/"
-[GIN] 2023/08/04 - 23:28:22 | 401 |            0s |             ::1 | GET      "/v1/users/"
+::1 - [2023-08-09 07:03:52.5456173 +0800 CST m=+11.167266601] GET /v1/users/check 200 
+[GIN] 2023/08/09 - 07:03:52 | 200 |     66.4984ms |             ::1 | GET      "/v1/users/check"
+::1 - [2023-08-09 07:04:05.8178315 +0800 CST m=+24.439480801] GET /v1/users/logout 200 
+[GIN] 2023/08/09 - 07:04:05 | 200 |            0s |             ::1 | GET      "/v1/users/logout"
+::1 - [2023-08-09 07:04:13.7585959 +0800 CST m=+32.380245201] GET /v1/users/check 401 
+[GIN] 2023/08/09 - 07:04:13 | 401 |       326.8µs |             ::1 | GET      "/v1/users/check"

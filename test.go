@@ -7,7 +7,11 @@ import (
 	"test/middlewares"
 	. "test/src"
 
+	"test/pojo"
+
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
+	"github.com/go-playground/validator/v10"
 )
 
 func setupLogging() {
@@ -19,7 +23,14 @@ func main() {
 
 	setupLogging()
 	router := gin.Default()
-	router.Use(gin.BasicAuth(gin.Accounts{"Tom": "123456"}), middlewares.Logger()) //操作驗證
+
+	//register Validator Func
+	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
+		v.RegisterValidation("userpasd", middlewares.UserPasd)
+		v.RegisterStructValidation(middlewares.UserList, pojo.Users{})
+	}
+
+	router.Use(gin.Recovery(), middlewares.Logger()) //操作驗證，若發生panics則會強制關閉應用程式(代號500)
 	v1 := router.Group("/v1")
 	AddUserRouter(v1)
 
