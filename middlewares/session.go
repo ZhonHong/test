@@ -13,6 +13,10 @@ const userkey = "session_id"
 // Use cookie to store session id
 func SetSession() gin.HandlerFunc {
 	store := cookie.NewStore([]byte(userkey))
+	store.Options(sessions.Options{
+		MaxAge:   3600, //設置過期時間為1小時(以秒作為單位)
+		HttpOnly: true, //只能在 HTTP 請求中訪問 Cookie
+	})
 	return sessions.Sessions("mysession", store)
 }
 
@@ -22,7 +26,10 @@ func AuthSession() gin.HandlerFunc {
 		session := sessions.Default(c) //創建session預設值
 		sessionID := session.Get(userkey)
 		if sessionID == nil {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+			// c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+			// 	"message:": "此頁面需要登入",
+			// })
+			c.JSON(http.StatusBadRequest, gin.H{
 				"message:": "此頁面需要登入",
 			})
 			return

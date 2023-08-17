@@ -9,24 +9,26 @@ import (
 )
 
 func AddUserRouter(r *gin.RouterGroup) {
-	user := r.Group("/users", session.SetSession())
-	user.GET("/", service.FindALLUser)
-	user.GET("/:id", service.FindByUserId)
-	user.POST("/", service.PostUser)
-	user.POST("/more", service.CreateUserList)
-	//user.DELETE("/:id", service.DeleteUser)
-	user.PUT("/:id", service.PutUser)
-	//LoginUser
-	user.POST("/login", service.LoginUser)
 
+	api := r.Group("/api", session.SetSession())
+	{
+		api.GET("/", service.FindALLUser)
+		api.GET("/:id", service.FindByUserId)
+		api.POST("/", service.PostUser)
+		api.POST("/more", service.CreateUserList)
+		//user.DELETE("/:id", service.DeleteUser)
+		api.PUT("/:id", service.PutUser)
+		//LoginUser
+		api.POST("/login", service.LoginUser)
+	}
 	// Check User session
-	user.GET("/check", service.CheckUserSession)
+	api.GET("/check", service.CheckUserSession)
 
-	user.Use(session.AuthSession())
+	api.Use(session.AuthSession())
 	{
 		// delete user
-		user.DELETE("/:id", service.DeleteUser)
+		api.DELETE("/:id", service.DeleteUser)
 		// LogoutUser
-		user.GET("/logout", service.LogoutUser)
+		api.GET("/logout", service.LogoutUser)
 	}
 }
