@@ -33,8 +33,8 @@ func main() {
 	}
 
 	router.Use(gin.Recovery(), middlewares.Logger()) //操作驗證，若發生panics則會強制關閉應用程式(代號500)
-	v1 := router.Group("/v1")
-	AddUserRouter(v1)
+	api := router.Group("/api")
+	AddUserRouter(api)
 
 	router.Run(":8080")
 

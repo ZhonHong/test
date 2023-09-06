@@ -4,10 +4,10 @@ package service
 import (
 	"log"
 	"net/http"
+	"test/middlewares"
 
 	//"os/user"
 
-	"test/middlewares"
 	"test/pojo"
 
 	"github.com/gin-gonic/gin"

@@ -4,28 +4,41 @@
  - using env:	export GIN_MODE=release
  - using code:	gin.SetMode(gin.ReleaseMode)
 
-[GIN-debug] GET    /v1/api/                  --> test/service.FindALLUser (6 handlers)
-[GIN-debug] GET    /v1/api/:id               --> test/service.FindByUserId (6 handlers)
-[GIN-debug] POST   /v1/api/                  --> test/service.PostUser (6 handlers)
-[GIN-debug] POST   /v1/api/more              --> test/service.CreateUserList (6 handlers)
-[GIN-debug] PUT    /v1/api/:id               --> test/service.PutUser (6 handlers)
-[GIN-debug] POST   /v1/api/login             --> test/service.LoginUser (6 handlers)
-[GIN-debug] GET    /v1/api/check             --> test/service.CheckUserSession (6 handlers)
-[GIN-debug] DELETE /v1/api/:id               --> test/service.DeleteUser (7 handlers)
-[GIN-debug] GET    /v1/api/logout            --> test/service.LogoutUser (7 handlers)
+[GIN-debug] GET    /api/user/                --> test/service.FindALLUser (6 handlers)
+[GIN-debug] GET    /api/user/:id             --> test/service.FindByUserId (6 handlers)
+[GIN-debug] POST   /api/user/                --> test/service.PostUser (6 handlers)
+[GIN-debug] POST   /api/user/more            --> test/service.CreateUserList (6 handlers)
+[GIN-debug] PUT    /api/user/:id             --> test/service.PutUser (6 handlers)
+[GIN-debug] POST   /api/user/login           --> test/service.LoginUser (6 handlers)
+[GIN-debug] GET    /api/user/check           --> test/service.CheckUserSession (6 handlers)
+[GIN-debug] DELETE /api/user/:id             --> test/service.DeleteUser (7 handlers)
+[GIN-debug] GET    /api/user/logout          --> test/service.LogoutUser (7 handlers)
 [GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
 Please check https://pkg.go.dev/github.com/gin-gonic/gin#readme-don-t-trust-all-proxies for details.
 [GIN-debug] Listening and serving HTTP on :8080
-[GIN-debug] redirecting request 301: /v1/api/ --> /v1/api/
-::1 - [2023-08-18 02:07:15.5101831 +0800 CST m=+60.486820601] GET /v1/api/ 200 
-[GIN] 2023/08/18 - 02:07:15 | 200 |     93.9775ms |             ::1 | GET      "/v1/api/"
-::1 - [2023-08-18 02:07:27.7389371 +0800 CST m=+72.715574601] GET /v1/api/ 200 
-[GIN] 2023/08/18 - 02:07:27 | 200 |     16.9768ms |             ::1 | GET      "/v1/api/"
-::1 - [2023-08-18 02:07:38.994167 +0800 CST m=+83.970804501] GET /v1/api/1 200 
-[GIN] 2023/08/18 - 02:07:38 | 200 |      5.8941ms |             ::1 | GET      "/v1/api/1"
-::1 - [2023-08-18 02:07:55.8531418 +0800 CST m=+100.829779301] GET /v1/api/check 401 
-[GIN] 2023/08/18 - 02:07:55 | 401 |      4.9019ms |             ::1 | GET      "/v1/api/check"
-::1 - [2023-08-18 02:08:21.2308485 +0800 CST m=+126.207486001] POST /v1/api/login 200 
-[GIN] 2023/08/18 - 02:08:21 | 200 |     14.3879ms |             ::1 | POST     "/v1/api/login"
-::1 - [2023-08-18 02:08:36.9982925 +0800 CST m=+141.974930001] GET /v1/api/check 200 
-[GIN] 2023/08/18 - 02:08:37 | 200 |     13.6215ms |             ::1 | GET      "/v1/api/check"
+::1 - [2023-09-05 02:59:40.86918 +0800 CST m=+26.481874101] GET /api/ 404 
+[GIN] 2023/09/05 - 02:59:40 | 404 |      66.225ms |             ::1 | GET      "/api/"
+[GIN-debug] redirecting request 301: /api/user/ --> /api/user/
+::1 - [2023-09-05 02:59:45.5195349 +0800 CST m=+31.132229001] GET /api/user/ 200 
+[GIN] 2023/09/05 - 02:59:45 | 200 |      1.5808ms |             ::1 | GET      "/api/user/"
+[GIN-debug] [WARNING] Headers were already written. Wanted to override status code 400 with 200
+::1 - [2023-09-05 02:59:55.6848988 +0800 CST m=+41.297592901] GET /api/user/logout 400 
+[GIN] 2023/09/05 - 02:59:55 | 400 |       997.4µs |             ::1 | GET      "/api/user/logout"
+::1 - [2023-09-05 03:00:35.1138716 +0800 CST m=+80.726565701] POST /api/user/login 200 
+[GIN] 2023/09/05 - 03:00:35 | 200 |      1.8084ms |             ::1 | POST     "/api/user/login"
+::1 - [2023-09-05 03:00:52.0849981 +0800 CST m=+97.697692201] POST /api/user/check 404 
+[GIN] 2023/09/05 - 03:00:52 | 404 |       515.2µs |             ::1 | POST     "/api/user/check"
+::1 - [2023-09-05 03:01:20.082832 +0800 CST m=+125.695526101] POST /api/user/logout 404 
+[GIN] 2023/09/05 - 03:01:20 | 404 |            0s |             ::1 | POST     "/api/user/logout"
+::1 - [2023-09-05 03:01:34.0773729 +0800 CST m=+139.690067001] POST /api/check 404 
+[GIN] 2023/09/05 - 03:01:34 | 404 |       974.2µs |             ::1 | POST     "/api/check"
+::1 - [2023-09-05 03:01:45.337074 +0800 CST m=+150.949768101] GET /api/check 404 
+[GIN] 2023/09/05 - 03:01:45 | 404 |       862.3µs |             ::1 | GET      "/api/check"
+::1 - [2023-09-05 03:01:53.4113429 +0800 CST m=+159.024037001] GET /api/user/check 200 
+[GIN] 2023/09/05 - 03:01:53 | 200 |      1.1156ms |             ::1 | GET      "/api/user/check"
+::1 - [2023-09-05 03:02:26.7535534 +0800 CST m=+192.366247501] GET /api/check 404 
+[GIN] 2023/09/05 - 03:02:26 | 404 |      1.0058ms |             ::1 | GET      "/api/check"
+::1 - [2023-09-05 03:02:39.4378252 +0800 CST m=+205.050519301] GET /api/logout 404 
+[GIN] 2023/09/05 - 03:02:39 | 404 |      1.2124ms |             ::1 | GET      "/api/logout"
+::1 - [2023-09-05 03:02:44.5081307 +0800 CST m=+210.120824801] GET /api/user/logout 200 
+[GIN] 2023/09/05 - 03:02:44 | 200 |       561.1µs |             ::1 | GET      "/api/user/logout"
