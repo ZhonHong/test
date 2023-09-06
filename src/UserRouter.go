@@ -10,7 +10,7 @@ import (
 
 func AddUserRouter(r *gin.RouterGroup) {
 
-	api := r.Group("/api", session.SetSession())
+	api := r.Group("/users", session.SetSession())
 	{
 		api.GET("/", service.FindALLUser)
 		api.GET("/:id", service.FindByUserId)
