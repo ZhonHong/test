@@ -6,14 +6,14 @@ import (
 )
 
 type User struct { //DB : Users
-	Id       int    `json:"UserId" binding:"required"`        //required必填項目，Id DB : id, UserId DB: user_id
-	Name     string `json:"UserName" binding:"required,gt=5"` // Name DB:name, UserName DB: user_name
+	Id       int    `json:"UserId"`   //required必填項目，Id DB : id, UserId DB: user_id
+	Name     string `json:"UserName"` // Name DB:name, UserName DB: user_name
 	Password string `json:"UserPassword" binding:"min=4,max=20,userpasd"`
 	Email    string `json:"UserEmail" binding:"email"`
 }
 
 type Users struct {
-	UserList     []User `json:"UserList" binding:"required,gt=0,lt=3"`
+	UserList     []User `json:"UserList" binding:"gt=0,lt=3"`
 	UserListSize int    `json:"UserListSize"`
 }
 
@@ -29,10 +29,29 @@ func FindByUserId(userId string) User {
 	return user
 }
 
+// func GetUserData(id int, name string, email string) *User {
+// 	user := User{}
+// 	db := database.DBconnect
+// 	tx := db.Where("id = ? and name = ? and email = ?", id, name, email).First(&user)
+// 	if tx.Error != nil {
+// 		log.Printf("error:%s", tx.Error.Error())
+// 		return nil
+// 	} else {
+// 		return &user
+// 	}
+// }
+
 // Post
-func CreateUser(user User) User {
-	database.DBconnect.Create(&user)
-	return user
+func CreateUser(user User) *User {
+	// database.DBconnect.Create(&user)
+	db := database.DBconnect
+	tx := db.Create(&user)
+	if tx.Error != nil {
+		log.Printf("error:%s", tx.Error.Error())
+		return nil
+	} else {
+		return &user
+	}
 }
 
 // DeleteUser
@@ -50,8 +69,15 @@ func UpdateUser(userId string, user User) User {
 }
 
 // CheckUserPassword
-func CheckUserPassword(name string, password string) User {
+func CheckUserPassword(email string, password string) *User {
 	user := User{}
-	database.DBconnect.Where("name = ? and password = ?", name, password).First(&user)
-	return user
+	db := database.DBconnect
+	tx := db.Where("email = ? and password = ?", email, password).First(&user)
+	if tx.Error != nil {
+		log.Printf("error:%s", tx.Error.Error())
+		return nil
+	} else {
+		return &user
+	}
+
 }

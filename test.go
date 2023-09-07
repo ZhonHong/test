@@ -9,6 +9,9 @@ import (
 
 	"test/pojo"
 
+	"time"
+
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
@@ -32,7 +35,13 @@ func main() {
 
 	}
 
-	router.Use(gin.Recovery(), middlewares.Logger()) //操作驗證，若發生panics則會強制關閉應用程式(代號500)
+	router.Use(gin.Recovery(), middlewares.Logger(), cors.New(cors.Config{
+		AllowOrigins:     []string{"*"}, // 允许的源，使用通配符 "*" 表示任何来源都允许
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	})) //操作驗證，若發生panics則會強制關閉應用程式(代號500)
 	api := router.Group("/api")
 	AddUserRouter(api)
 

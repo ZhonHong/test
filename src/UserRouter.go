@@ -14,12 +14,13 @@ func AddUserRouter(r *gin.RouterGroup) {
 	{
 		api.GET("/", service.FindALLUser)
 		api.GET("/:id", service.FindByUserId)
-		api.POST("/", service.PostUser)
+		api.POST("/register", service.PostUser)
 		api.POST("/more", service.CreateUserList)
 		//user.DELETE("/:id", service.DeleteUser)
 		api.PUT("/:id", service.PutUser)
 		//LoginUser
 		api.POST("/login", service.LoginUser)
+		api.GET("/getUserData", service.GetUserData)
 	}
 	// Check User session
 	api.GET("/check", service.CheckUserSession)

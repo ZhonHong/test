@@ -2,6 +2,7 @@ package service
 
 //定義尋找及新增的服務
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"test/middlewares"
@@ -10,6 +11,7 @@ import (
 
 	"test/pojo"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 )
 
@@ -32,6 +34,10 @@ func FindByUserId(c *gin.Context) {
 	log.Println("User ->", user)
 	c.JSON(http.StatusOK, user)
 }
+
+// func GetUserData(c *gin.Context){
+// 	user := pojo.GetUserData()
+// }
 
 // Post User
 func PostUser(c *gin.Context) {
@@ -118,19 +124,63 @@ func CreateUserList(c *gin.Context) {
 
 // Login User
 func LoginUser(c *gin.Context) {
-	name := c.PostForm("name")
-	password := c.PostForm("password")
-	user := pojo.CheckUserPassword(name, password)
-	if user.Id == 0 {
+	type reqData struct {
+		Email    *string `json:"Email"`
+		Password *string `json:"Password"`
+	}
+
+	var req reqData
+	c.ShouldBind(&req)
+
+	// user := pojo.User{}
+	// if err := c.ShouldBindJSON(&user); err != nil {
+	// 	c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	// 	return
+	// }
+
+	// email := user.Email
+	// password := user.Password
+	if req.Email == nil || req.Password == nil {
 		c.JSON(http.StatusNotFound, "Error")
 		return
 	}
-	middlewares.SaveSession(c, user.Id) //將user.Id傳入
+	us := pojo.CheckUserPassword(*req.Email, *req.Password)
+
+	token, err := middlewares.GenerateToken(us.Id, us.Name, us.Email)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token"})
+		return
+	}
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Login Successfully",
-		"User":    user,
-		"Session": middlewares.GetSession(c),
+		"token":   token,
+		"User":    us,
 	})
+}
+
+func GetUserData(c *gin.Context) {
+	errStr, claims := middlewares.ParseToken(c)
+	if claims != nil {
+		// Token Cliams Data
+		var test jwt.MapClaims
+		test = *claims
+
+		userId := int(test["userId"].(float64)) //UserId
+		userName := test["userName"].(string)
+		userEmail := test["userEmail"].(string)
+		fmt.Println("User ID:", userId)
+		fmt.Println("User Name:", userName)
+		fmt.Println("User Email:", userEmail)
+
+		c.JSON(http.StatusOK, gin.H{
+			"userId":    userId,
+			"userName":  userName,
+			"userEmail": userEmail,
+		})
+	} else {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": errStr})
+	}
+
 }
 
 // Logout User
@@ -144,7 +194,7 @@ func LogoutUser(c *gin.Context) {
 // Check User Session
 func CheckUserSession(c *gin.Context) {
 	sessionId := middlewares.GetSession(c)
-	if sessionId == 0 {
+	if sessionId < 0 {
 		c.JSON(http.StatusUnauthorized, "Error")
 		return
 	}
