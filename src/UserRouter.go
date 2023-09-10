@@ -10,16 +10,16 @@ import (
 
 func AddUserRouter(r *gin.RouterGroup) {
 
-	api := r.Group("/users", session.SetSession())
+	api := r.Group("/api", session.SetSession())
 	{
 		api.GET("/", service.FindALLUser)
 		api.GET("/:id", service.FindByUserId)
-		api.POST("/register", service.PostUser)
+		api.POST("/Register", service.PostUser)
 		api.POST("/more", service.CreateUserList)
 		//user.DELETE("/:id", service.DeleteUser)
 		api.PUT("/:id", service.PutUser)
 		//LoginUser
-		api.POST("/login", service.LoginUser)
+		api.POST("/Login", service.LoginUser)
 		api.GET("/getUserData", service.GetUserData)
 	}
 	// Check User session

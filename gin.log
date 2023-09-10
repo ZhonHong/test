@@ -1,27 +1,2 @@
 [GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
 
-[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
- - using env:	export GIN_MODE=release
- - using code:	gin.SetMode(gin.ReleaseMode)
-
-[GIN-debug] GET    /api/users/               --> test/service.FindALLUser (7 handlers)
-[GIN-debug] GET    /api/users/:id            --> test/service.FindByUserId (7 handlers)
-[GIN-debug] POST   /api/users/register       --> test/service.PostUser (7 handlers)
-[GIN-debug] POST   /api/users/more           --> test/service.CreateUserList (7 handlers)
-[GIN-debug] PUT    /api/users/:id            --> test/service.PutUser (7 handlers)
-[GIN-debug] POST   /api/users/login          --> test/service.LoginUser (7 handlers)
-[GIN-debug] GET    /api/users/getUserData    --> test/service.GetUserData (7 handlers)
-[GIN-debug] GET    /api/users/check          --> test/service.CheckUserSession (7 handlers)
-[GIN-debug] DELETE /api/users/:id            --> test/service.DeleteUser (8 handlers)
-[GIN-debug] GET    /api/users/logout         --> test/service.LogoutUser (8 handlers)
-[GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
-Please check https://pkg.go.dev/github.com/gin-gonic/gin#readme-don-t-trust-all-proxies for details.
-[GIN-debug] Listening and serving HTTP on :8080
-1.165.180.19 - [2023-09-08 04:51:19.8150497 +0800 CST m=+7.998272701] POST /api/users/login 200 
-[GIN] 2023/09/08 - 04:51:19 | 200 |     82.6405ms |    1.165.180.19 | POST     "/api/users/login"
-[GIN] 2023/09/08 - 04:51:19 | 500 |     19.2003ms |    1.165.180.19 | GET      "/api/users/getUserData"
-1.165.180.19 - [2023-09-08 04:52:31.9572582 +0800 CST m=+80.140481201] OPTIONS /api/users/register 204 
-[GIN] 2023/09/08 - 04:52:31 | 204 |            0s |    1.165.180.19 | OPTIONS  "/api/users/register"
-[GIN-debug] [WARNING] Headers were already written. Wanted to override status code 400 with 406
-1.165.180.19 - [2023-09-08 04:52:32.041273 +0800 CST m=+80.224496001] POST /api/users/register 400 
-[GIN] 2023/09/08 - 04:52:32 | 400 |       520.2µs |    1.165.180.19 | POST     "/api/users/register"

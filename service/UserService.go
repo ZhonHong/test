@@ -159,11 +159,11 @@ func LoginUser(c *gin.Context) {
 }
 
 func GetUserData(c *gin.Context) {
-	errStr, claims := middlewares.ParseToken(c)
+	errStr, claims := middlewares.ParseToken(c) //對應ParseToken(string, *jwt.MapClaims)
 	if claims != nil {
 		// Token Cliams Data
-		var test jwt.MapClaims
-		test = *claims
+		var test jwt.MapClaims //宣告test為jwt.MapClaims型態
+		test = *claims         //使test可以使用claims資料
 
 		userId := int(test["userId"].(float64)) //UserId
 		userName := test["userName"].(string)

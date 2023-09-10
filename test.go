@@ -42,8 +42,8 @@ func main() {
 		AllowCredentials: true,
 		MaxAge:           12 * time.Hour,
 	})) //操作驗證，若發生panics則會強制關閉應用程式(代號500)
-	api := router.Group("/api")
-	AddUserRouter(api)
+
+	AddUserRouter(&router.RouterGroup)
 
 	router.Run(":8080")
 
