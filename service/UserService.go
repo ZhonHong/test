@@ -5,7 +5,10 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
+	"path/filepath"
 	"test/middlewares"
+	"time"
 
 	//"os/user"
 
@@ -22,6 +25,12 @@ func FindALLUser(c *gin.Context) {
 	//c.JSON(http.StatusOK, userList) //接受gin.Context類型的參數c，並使用c.JSON方法將userList以JSON格式返回客戶端
 	users := pojo.FindALLUsers()
 	c.JSON(http.StatusOK, users)
+}
+
+// 多筆上傳
+func FindALLImage(c *gin.Context) {
+	images := pojo.FindALLImages()
+	c.JSON(http.StatusOK, images)
 }
 
 // Get User by Id
@@ -202,4 +211,93 @@ func CheckUserSession(c *gin.Context) {
 		"message": "Check Session Successfully",
 		"User":    middlewares.GetSession(c),
 	})
+}
+
+// UserPosts
+func UserPost(c *gin.Context) {
+	post := pojo.Post{}      //user的pojo.User結構變量體
+	err := c.BindJSON(&post) //錯誤判斷,用指標指向user變量傳遞給BindJSON，以便在方法內部修改user變量
+	if err != nil {
+		c.JSON(http.StatusNotAcceptable, "Error :"+err.Error()) //判斷是否空值，則使用c.JSON方法返回一个HTTP狀態码
+		return
+	}
+	//userList = append(userList, user)            //將uesr變量加入userList切片中，並傳回客戶端
+	newPost := pojo.CreatePost(post)
+
+	// 将当前时间转换为字符串
+
+	c.JSON(http.StatusOK, newPost) //使用c.JSON方法返回一个HTTP狀態碼及成功字串
+}
+
+func UserPostImages(c *gin.Context) {
+	image := pojo.Image{}
+	// 解析表單数據，包括文件
+	file, err := c.FormFile("File")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error() + "未上傳文件"})
+		return
+	}
+
+	// 生成一个随机文件名或根据需要生成文件名
+	// 这里使用了时间戳作为文件名，你可以根据需要生成唯一的文件名
+	timestamp := time.Now().UnixNano()
+	filename := fmt.Sprintf("%d%s", timestamp, filepath.Ext(file.Filename))
+
+	// 文件保存的相對路径
+	uploadDir := "./Images"
+	err = os.MkdirAll(uploadDir, os.ModePerm) //路徑中沒有資料夾則產生資料夾
+
+	// 拼接完整的文件保存路径
+	imgFullPath := filepath.Join(uploadDir, filename)
+
+	// 将文件保存到本地文件系统
+	err = c.SaveUploadedFile(file, imgFullPath)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error() + "保存文件失败"})
+		return
+	}
+
+	// 保存文件信息到数据库
+	image.Img = filename
+	newImage := pojo.CreatePostImg(image)
+	c.JSON(http.StatusOK, newImage)
+}
+
+// update more file
+func UserPostmoreImages(c *gin.Context) {
+	form, err := c.MultipartForm()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error() + "未上傳文件"})
+		return
+	}
+	var images []pojo.Image
+	files := form.File["File"]
+
+	for _, file := range files {
+		// 生成一个随机文件名或根据需要生成文件名
+		timestamp := time.Now().UnixNano()
+		filename := fmt.Sprintf("%d%s", timestamp, filepath.Ext(file.Filename))
+
+		// 指定文件保存的路径
+		uploadDir := "./Images"
+		err = os.MkdirAll(uploadDir, os.ModePerm)
+
+		// 拼接完整的文件保存路径
+		imgFullPath := filepath.Join(uploadDir, filename)
+
+		// 将文件保存到本地文件系统
+		err := c.SaveUploadedFile(file, imgFullPath)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "保存文件失败"})
+			return
+		}
+
+		// 保存文件信息到数据库
+		image := pojo.Image{
+			Img: filename,
+		}
+		images = append(images, image)
+
+	}
+	c.JSON(http.StatusOK, images)
 }

@@ -44,7 +44,7 @@ func main() {
 	})) //操作驗證，若發生panics則會強制關閉應用程式(代號500)
 
 	AddUserRouter(&router.RouterGroup)
-
+	router.Static("/images", "./Images") //提高效能、加快頁面載入速度、允許多筆靜態資料下載
 	router.Run(":8080")
 
 }
