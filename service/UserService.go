@@ -224,22 +224,20 @@ func UserPost(c *gin.Context) {
 	//userList = append(userList, user)            //將uesr變量加入userList切片中，並傳回客戶端
 	newPost := pojo.CreatePost(post)
 
-	// 将当前时间转换为字符串
-
 	c.JSON(http.StatusOK, newPost) //使用c.JSON方法返回一个HTTP狀態碼及成功字串
 }
 
 func UserPostImages(c *gin.Context) {
 	image := pojo.Image{}
-	// 解析表單数據，包括文件
+	// 解析表單數據，包括文件
 	file, err := c.FormFile("File")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error() + "未上傳文件"})
 		return
 	}
 
-	// 生成一个随机文件名或根据需要生成文件名
-	// 这里使用了时间戳作为文件名，你可以根据需要生成唯一的文件名
+	// 生成随機文件名
+	// 用時間戳作為文件名
 	timestamp := time.Now().UnixNano()
 	filename := fmt.Sprintf("%d%s", timestamp, filepath.Ext(file.Filename))
 
@@ -247,17 +245,17 @@ func UserPostImages(c *gin.Context) {
 	uploadDir := "./Images"
 	err = os.MkdirAll(uploadDir, os.ModePerm) //路徑中沒有資料夾則產生資料夾
 
-	// 拼接完整的文件保存路径
+	// Join完整的文件路径
 	imgFullPath := filepath.Join(uploadDir, filename)
 
-	// 将文件保存到本地文件系统
+	// 將文件存到本地端
 	err = c.SaveUploadedFile(file, imgFullPath)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error() + "保存文件失败"})
 		return
 	}
 
-	// 保存文件信息到数据库
+	// 將文件信息存到DB
 	image.Img = filename
 	newImage := pojo.CreatePostImg(image)
 	c.JSON(http.StatusOK, newImage)
@@ -274,25 +272,24 @@ func UserPostmoreImages(c *gin.Context) {
 	files := form.File["File"]
 
 	for _, file := range files {
-		// 生成一个随机文件名或根据需要生成文件名
+		// 生成隨機文件名
 		timestamp := time.Now().UnixNano()
 		filename := fmt.Sprintf("%d%s", timestamp, filepath.Ext(file.Filename))
 
-		// 指定文件保存的路径
+		// 指定文件保存路徑
 		uploadDir := "./Images"
 		err = os.MkdirAll(uploadDir, os.ModePerm)
 
-		// 拼接完整的文件保存路径
 		imgFullPath := filepath.Join(uploadDir, filename)
 
-		// 将文件保存到本地文件系统
+		// 將文件保存至本地端
 		err := c.SaveUploadedFile(file, imgFullPath)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "保存文件失败"})
 			return
 		}
 
-		// 保存文件信息到数据库
+		// 將文件保存至DB
 		image := pojo.Image{
 			Img: filename,
 		}
