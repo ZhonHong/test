@@ -8,7 +8,7 @@ import (
 )
 
 func Logger() gin.HandlerFunc {
-	logFilePath := "D:\\gin.log"
+	logFilePath := "./"
 	logFile, err := os.Create(logFilePath)
 	if err != nil {
 		fmt.Println("Failed to create log file:", err)

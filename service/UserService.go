@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strconv"
 	"test/middlewares"
 	"time"
 
@@ -27,10 +28,52 @@ func FindALLUser(c *gin.Context) {
 	c.JSON(http.StatusOK, users)
 }
 
+// 觀看個人貼文
+func FindALLPosts(c *gin.Context) {
+
+	//c.JSON(http.StatusOK, userList) //接受gin.Context類型的參數c，並使用c.JSON方法將userList以JSON格式返回客戶端
+	errStr, claims := middlewares.ParseToken(c) //對應ParseToken(string, *jwt.MapClaims)
+	if claims != nil {
+		// Token Cliams Data
+		var test jwt.MapClaims //宣告test為jwt.MapClaims型態
+		test = *claims         //使test可以使用claims資料
+
+		userId := int(test["userId"].(float64)) //UserId
+		userName := test["userName"].(string)
+		userEmail := test["userEmail"].(string)
+		fmt.Println("User NameId:", userId)
+		fmt.Println("User Name:", userName)
+		fmt.Println("User Email:", userEmail)
+		posts := pojo.FindALLPosts(userName)
+		c.JSON(http.StatusOK, posts)
+	} else {
+		fmt.Println("error" + errStr)
+	}
+
+}
+
+// 觀看全部公開貼文
+func GetALLPosts(c *gin.Context) {
+	posts := pojo.GetALLPosts()
+	c.JSON(http.StatusOK, posts)
+}
+
 // 多筆上傳
 func FindALLImage(c *gin.Context) {
 	images := pojo.FindALLImages()
 	c.JSON(http.StatusOK, images)
+}
+
+// Get Post by Id
+func GetPost(c *gin.Context) {
+
+	post := pojo.GetPost(c.Param("id"))
+	if post.Id == 0 {
+		c.JSON(http.StatusNotFound, "Error")
+		return
+	}
+	log.Println("Post ->", post)
+	c.JSON(http.StatusOK, post)
 }
 
 // Get User by Id
@@ -42,6 +85,24 @@ func FindByUserId(c *gin.Context) {
 	}
 	log.Println("User ->", user)
 	c.JSON(http.StatusOK, user)
+}
+
+// Delete user Post
+func DeletePost(c *gin.Context) {
+	postId := c.Param("id")
+	postIdInt, err := strconv.Atoi(postId) //將URL中的id字串轉為int
+	if err != nil {
+		c.JSON(http.StatusBadRequest, "Invalid ID")
+		return
+	}
+
+	err = pojo.DeletePost(postIdInt) //使用DeletePost方法進行軟刪除，如果刪除成功會回傳nil值
+	if err != nil {
+		c.JSON(http.StatusNotFound, "Error: "+err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, "Successfully")
 }
 
 // func GetUserData(c *gin.Context){
@@ -104,6 +165,25 @@ func DeleteUser(c *gin.Context) {
 // 	c.JSON(http.StatusNotFound, "Error")
 // }
 
+// Edit Post
+func EditPost(c *gin.Context) {
+	post := pojo.PostEdit{}
+	err := c.BindJSON(&post)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, "err:"+err.Error())
+		return
+	}
+	post = pojo.EditPost(c.Param("id"), post)
+	if post.Id == 0 {
+		c.JSON(http.StatusBadRequest, "err:"+err.Error())
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Edit Success",
+		"post":    post,
+	})
+}
+
 // Update User
 func PutUser(c *gin.Context) {
 	user := pojo.User{}
@@ -117,6 +197,7 @@ func PutUser(c *gin.Context) {
 		c.JSON(http.StatusNotFound, "Error")
 		return
 	}
+
 	c.JSON(http.StatusOK, user) //回傳user
 }
 
@@ -213,24 +294,42 @@ func CheckUserSession(c *gin.Context) {
 	})
 }
 
-// UserPosts
+// PostsContent
 func UserPost(c *gin.Context) {
-	post := pojo.Post{}      //user的pojo.User結構變量體
+	post := pojo.Post{}                         //user的pojo.User結構變量體
+	errStr, claims := middlewares.ParseToken(c) //對應ParseToken(string, *jwt.MapClaims)
+	if claims != nil {
+		// Token Cliams Data
+		var test jwt.MapClaims //宣告test為jwt.MapClaims型態
+		test = *claims         //使test可以使用claims資料
+
+		userId := int(test["userId"].(float64)) //UserId
+		userName := test["userName"].(string)
+		userEmail := test["userEmail"].(string)
+		fmt.Println("User NameId:", userId)
+		fmt.Println("User Name:", userName)
+		fmt.Println("User Email:", userEmail)
+
+		post.User = userName
+	} else {
+		fmt.Println("error" + errStr)
+	}
 	err := c.BindJSON(&post) //錯誤判斷,用指標指向user變量傳遞給BindJSON，以便在方法內部修改user變量
 	if err != nil {
 		c.JSON(http.StatusNotAcceptable, "Error :"+err.Error()) //判斷是否空值，則使用c.JSON方法返回一个HTTP狀態码
 		return
 	}
+
 	//userList = append(userList, user)            //將uesr變量加入userList切片中，並傳回客戶端
 	newPost := pojo.CreatePost(post)
-
-	c.JSON(http.StatusOK, newPost) //使用c.JSON方法返回一个HTTP狀態碼及成功字串
+	fmt.Println(newPost)
+	c.JSON(http.StatusOK, "Success") //使用c.JSON方法返回一个HTTP狀態碼及成功字串
 }
 
 func UserPostImages(c *gin.Context) {
 	image := pojo.Image{}
 	// 解析表單數據，包括文件
-	file, err := c.FormFile("File")
+	file, err := c.FormFile("File") //名稱需與前端form-data Key名稱相同
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error() + "未上傳文件"})
 		return

@@ -21,9 +21,15 @@ func AddUserRouter(r *gin.RouterGroup) {
 		//LoginUser
 		api.POST("/Login", service.LoginUser)
 		api.GET("/getUserData", service.GetUserData)
-		api.POST("/UserPost", service.UserPost)
+		api.POST("/userPost", service.UserPost)
 		api.POST("/imgUpload", service.UserPostImages)
+		api.GET("/getPosts", service.FindALLPosts)
+		api.GET("/getAllPosts", service.GetALLPosts)
+		api.GET("/getPost/:id", service.GetPost)
+		api.PUT("/editPost/:id", service.EditPost)
+		api.DELETE("/deletePost/:id", service.DeletePost)
 	}
+
 	// Check User session
 	api.GET("/check", service.CheckUserSession)
 
